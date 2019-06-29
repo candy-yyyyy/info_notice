@@ -1,10 +1,10 @@
+#!usr/bin/python
+# -*- coding: utf-8 -*-
 import requests
 import SendEmail
 import sched
 import time
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 
 waterUrl = 'http://www.cqzls.com'  # 停水
 gasUrl = 'http://www.cqgas.cn/portal/article/page?cateId=1082&pageNo=1'  # 燃气
@@ -61,7 +61,9 @@ def getGasCutOff(gasUrl, inc):
 if __name__ == '__main__':
     schedule.enter(0, 0, getWaterCutOffInfoList, (waterUrl,60)) # 60秒
     schedule.enter(0, 0, getGasCutOff, (gasUrl, 60))  # 60秒
-    try:
-        schedule.run()
-    except Exception as e:
-        SendEmail.send_mail(user_list,'通知程序异常',e.message)
+    while True:
+        try:
+            schedule.run()
+        except Exception as e:
+            SendEmail.send_mail(user_list, '通知程序异常', "Error {0}".format(str(e.args[0])).encode("utf-8"))
+
